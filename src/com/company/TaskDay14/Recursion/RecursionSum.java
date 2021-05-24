@@ -1,6 +1,6 @@
 package com.company.Recursion;
 
-public class Recursion {
+public class RecursionSum {
     public int recursion(int number[],int n) {
         if(n <= 0){
             return 0;
