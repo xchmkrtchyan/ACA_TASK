@@ -1,2 +1,2 @@
-package com.company.TaskDay33;public class MyQuev {
+package com.company.TaskDay33;public interface MyQueue {
 }
