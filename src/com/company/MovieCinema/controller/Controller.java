@@ -3,25 +3,21 @@ package com.company.MovieCinema;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Driver {
+public class Controller {
     private Database movieDatabase;
 
-    /**
-     * Constructor for objects of class Driver
-     * <p>
-     * Loads a database of movies from file
-     */
-    public Driver() {
+    public Controller() {
         movieDatabase = new Database();
     }
 
-    /*
-     * Deletes a movie from the database, if a matching title read from user is found.
-     * Also confirms with user before deleting.
-     */
+    public static void main(String[] args) {
+        Controller movieLibrary = new Controller();
+        movieLibrary.runController();
+    }
+
     private void deleteMovie() {
-        UserInput userInput = new UserInput();
-        String movieTitleToDelete = userInput.readStringFromUser("Enter movie title to delete: ", false);
+        UserInputValidation userInputValidation = new UserInputValidation();
+        String movieTitleToDelete = userInputValidation.readStringFromUser("Enter movie title to delete: ", false);
 
         // Search for the movie to delete by its title
         ArrayList<Movie> moviesForDelete = movieDatabase.searchForMovie(movieTitleToDelete, "title", 0);
@@ -46,20 +42,16 @@ public class Driver {
                 int deleteOptionChosen = 0;
                 //Keep asking for user to enter option until valid input received (readIntegerFromUser returns 0 for error)
                 while (deleteOptionChosen == 0) {
-                    userInput.clearScreen();
+                    userInputValidation.clearScreen();
                     confirmDeleteConsole.displayMenu();
                     // Read which delete option the user wants (1 for yes 2 for no)
-                    deleteOptionChosen = userInput.readIntegerFromUser(2, "Please choose an option between 1 and 2: ");
+                    deleteOptionChosen = userInputValidation.readIntegerFromUser(2, "Please choose an option between 1 and 2: ");
                 }
 
                 if (deleteOptionChosen == 1) //User wants to delete the movie
                 {
-                    /*
-                     * We can just get the first movie in the ArrayList of movies because only movies of one title can exist
-                     * and we know we found a movie in our search
-                     */
                     movieDatabase.deleteMovie(moviesForDelete.get(0));
-                    System.out.print("\nMovie successfuly deleted.\n\n");
+                    System.out.print("\nMovie successfully deleted.\n\n");
                 } else //User doesn't want to delete the movie
                 {
                     System.out.print("\nOk. movie won't be deleted.\n\n");
@@ -70,18 +62,15 @@ public class Driver {
         }
     }
 
-    /*
-     * Displays all movies with information for above and including a minimum rating read from the user
-     */
     private void displayFavouriteMovies() {
-        UserInput userInput = new UserInput();
+        UserInputValidation userInputValidation = new UserInputValidation();
 
         int minFavRating = 0;   // Set to 0 initially so while loop asking for user to enter rating is entered
         while (minFavRating == 0)  // Keep asking user to enter number between 1 and 10
         {
-            userInput.clearScreen();
+            userInputValidation.clearScreen();
             //readIntegerFromUser returns 0 if number between 1 and 10 is not entered (so loop keeps going)
-            minFavRating = userInput.readIntegerFromUser(10, "Please choose a minimum favourite rating between 1 and 10: ");
+            minFavRating = userInputValidation.readIntegerFromUser(10, "Please choose a minimum favourite rating between 1 and 10: ");
         }
 
         ArrayList<Movie> favMovies = movieDatabase.searchForMovie("", "favourite", minFavRating);
@@ -99,60 +88,47 @@ public class Driver {
         }
     }
 
-    /*
-     *  Run the program on the command line after compiling with: java Driver
-     */
-    public static void main(String[] args) {
-        Driver movieLibrary = new Driver();
-        movieLibrary.runDriver();
-    }
-
-    /*
-     * Read new movie information from user
-     *
-     * Returns a Movie object with information set
-     */
     private Movie readMovieInformationFromUser() {
-        UserInput userInput = new UserInput();
+        UserInputValidation userInputValidation = new UserInputValidation();
 
         String messagePromptForUser = "\nPlease enter the movie title: ";
         boolean titleAlreadyExists = true;  // Initially set to true so will enter while and start asking user to enter title
         String title = "";
         while (titleAlreadyExists)  // Keep asking user for a title until one is entered that isn't already in the database
         {
-            userInput.clearScreen();
-            title = userInput.readStringFromUser(messagePromptForUser, false);
+            userInputValidation.clearScreen();
+            title = userInputValidation.readStringFromUser(messagePromptForUser, false);
             ArrayList<Movie> moviesMatchingTitle = movieDatabase.searchForMovie(title, "title", 0);
             if (moviesMatchingTitle.size() == 0) {
                 titleAlreadyExists = false;  //Movie title doesn't exist in database so exit out of loop
             } else {
                 System.out.print("\nError a movie with that title already exists!.\n\n");
-                userInput.pressEnterToContinue();
+                userInputValidation.pressEnterToContinue();
             }
         }
 
         //Read movie director
         messagePromptForUser = "\nPlease enter the movie director: ";
-        String director = userInput.readStringFromUser(messagePromptForUser, false);
+        String director = userInputValidation.readStringFromUser(messagePromptForUser, false);
 
         //Read actor 1
-        messagePromptForUser = "\nPlease enter the frist movie actor: ";
-        String actor1 = userInput.readStringFromUser(messagePromptForUser, true);
+        messagePromptForUser = "\nPlease enter the first movie actor if you don't want to enter actor press ENTER: ";
+        String actor1 = userInputValidation.readStringFromUser(messagePromptForUser, true);
 
         //Read actor 2
-        messagePromptForUser = "\nPlease enter the second movie actor: ";
-        String actor2 = userInput.readStringFromUser(messagePromptForUser, true);
+        messagePromptForUser = "\nPlease enter the second movie actor if you don't want to enter actor press ENTER: ";
+        String actor2 = userInputValidation.readStringFromUser(messagePromptForUser, true);
 
         //Read actor 3
-        messagePromptForUser = "\nPlease enter the third movie actor: ";
-        String actor3 = userInput.readStringFromUser(messagePromptForUser, true);
+        messagePromptForUser = "\nPlease enter the third movie actor if you don't want to enter actor press ENTER: ";
+        String actor3 = userInputValidation.readStringFromUser(messagePromptForUser, true);
 
         //Read movie rating from user
         messagePromptForUser = "Please enter the movie rating: ";
         int ratingFromUser = 0; // Set to 0 initially so while loop is entered
         while (ratingFromUser == 0) {
             //method returns 0 for error so will keep asking until valid integer is entered
-            ratingFromUser = userInput.readIntegerFromUser(10, messagePromptForUser);
+            ratingFromUser = userInputValidation.readIntegerFromUser(10, messagePromptForUser);
         }
 
         try {
@@ -165,10 +141,7 @@ public class Driver {
         }
     }
 
-    /*
-     * Main method for continuously displaying the menu, reading option from the user and calling program option methods
-     */
-    public void runDriver() {
+    public void runController() {
         boolean continueProgram = true;
         int optionChosen = 0;
 
@@ -181,20 +154,20 @@ public class Driver {
         menuOptions.add("Exit\n");
         try {
             Console driverConsole = new Console(menuTitle, menuOptions);
-            UserInput userInput = new UserInput();
+            UserInputValidation userInputValidation = new UserInputValidation();
             while (continueProgram) {
-                userInput.clearScreen();
+                userInputValidation.clearScreen();
                 driverConsole.displayMenu();
 
                 //Read the integer the user inputted, 0 is returned by readIntegerFromUser for error
-                optionChosen = userInput.readIntegerFromUser(5, "Please choose an option between 1 and 5: ");
-                userInput.clearScreen();
+                optionChosen = userInputValidation.readIntegerFromUser(5, "Please choose an option between 1 and 5: ");
+                userInputValidation.clearScreen();
 
                 switch (optionChosen) {
                     // Search for movie by title or director
                     case 1:
                         searchForMovie();
-                        userInput.pressEnterToContinue();
+                        userInputValidation.pressEnterToContinue();
                         break;
 
                     // Read a new movie from the user and add it to the database of movies
@@ -206,13 +179,13 @@ public class Driver {
                     // Delete a movie from the database, by matching title
                     case 3:
                         deleteMovie();
-                        userInput.pressEnterToContinue();
+                        userInputValidation.pressEnterToContinue();
                         break;
 
                     // Display all movies above and including a minimum rating taken from the user
                     case 4:
                         displayFavouriteMovies();
-                        userInput.pressEnterToContinue();
+                        userInputValidation.pressEnterToContinue();
                         break;
 
                     // Exit the program, save all movies in database to file before finishing
@@ -232,11 +205,6 @@ public class Driver {
         }
     }
 
-    /*
-     * Search for a movie by either title or director, search is case-insensitive
-     *
-     * List of movies matching the search is displayed to the user
-     */
     private void searchForMovie() {
 
         try {
@@ -247,14 +215,13 @@ public class Driver {
             searchMenuOptions.add("Search by director\n");
             Console searchOptionConsole = new Console(searchMenuTitle, searchMenuOptions);
 
-            UserInput userInput = new UserInput();
+            UserInputValidation userInputValidation = new UserInputValidation();
 
-            int searchOptionChosen = 0;  //Initially set this to 0 so while loop will be entered
-            //Keep asking for user to enter option until valid input received (readIntegerFromUser returns 0 for error)
+            int searchOptionChosen = 0;
             while (searchOptionChosen == 0) {
-                userInput.clearScreen();
+                userInputValidation.clearScreen();
                 searchOptionConsole.displayMenu();
-                searchOptionChosen = userInput.readIntegerFromUser(2, "Please choose an option between 1 and 2: ");
+                searchOptionChosen = userInputValidation.readIntegerFromUser(2, "Please choose an option between 1 and 2: ");
             }
 
             // searchKey refers to the field in the Movie object we wish to search over
@@ -266,7 +233,7 @@ public class Driver {
             }
 
             // searchString will be the string the user wants to search for
-            String searchString = userInput.readStringFromUser("Enter " + searchKey + " to search for: ", false);
+            String searchString = userInputValidation.readStringFromUser("Enter " + searchKey + " to search for: ", false);
             ArrayList<Movie> foundMovies = movieDatabase.searchForMovie(searchString, searchKey, 0);
             if (foundMovies.size() == 0) {
                 System.out.print("\nNo movies found.\n\n");
